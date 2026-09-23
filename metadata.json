@@ -1,0 +1,6 @@
+{
+  "name": "AeroOptima Pro - Windows Power & Hardware Optimizer",
+  "description": "In-depth optimized Windows PC and laptop power profile manager, automated driver updater with restore point management, motherboard expansion specs, system corruption repair, and hidden Windows tweaks with a liquid glass interface.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
