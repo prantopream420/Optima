@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Zap,
   Activity,
@@ -29,7 +29,16 @@ export const HeaderTitleBar: React.FC<HeaderTitleBarProps> = ({
   onOpenExeModal,
   wallpapers
 }) => {
-  const [showWpDropdown, setShowWpDropdown] = React.useState(false);
+  const [showWpDropdown, setShowWpDropdown] = useState(false);
+  const [isNative, setIsNative] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.aeroOptimaNative?.isNative) {
+      setIsNative(true);
+      window.aeroOptimaNative.checkAdmin().then((admin) => setIsAdmin(admin)).catch(() => {});
+    }
+  }, []);
 
   const getProfileBadge = () => {
     switch (currentProfile) {
@@ -44,8 +53,29 @@ export const HeaderTitleBar: React.FC<HeaderTitleBarProps> = ({
 
   const badge = getProfileBadge();
 
+  const handleMinimize = () => {
+    if (window.aeroOptimaNative?.minimize) {
+      window.aeroOptimaNative.minimize();
+    }
+  };
+
+  const handleMaximize = () => {
+    if (window.aeroOptimaNative?.maximize) {
+      window.aeroOptimaNative.maximize();
+    }
+  };
+
+  const handleClose = () => {
+    if (window.aeroOptimaNative?.close) {
+      window.aeroOptimaNative.close();
+    }
+  };
+
   return (
-    <header className="relative z-30 flex items-center justify-between px-4 py-2.5 border-b border-white/10 bg-slate-950/40 backdrop-blur-xl select-none">
+    <header
+      className="relative z-30 flex items-center justify-between px-4 py-2.5 border-b border-white/10 bg-slate-950/40 backdrop-blur-xl select-none"
+      style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
+    >
       {/* Left: App Branding & Window Identity */}
       <div className="flex items-center gap-3">
         <div className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500/80 via-blue-600 to-indigo-700 shadow-md shadow-cyan-500/20 border border-white/20">
@@ -60,7 +90,13 @@ export const HeaderTitleBar: React.FC<HeaderTitleBarProps> = ({
               {badge.label}
             </span>
           </div>
-          <p className="text-[11px] text-slate-400">Windows 11 Hardware & Power Optimization Suite</p>
+          <p className="text-[11px] text-slate-400">
+            {isNative ? (
+              <span className="text-cyan-400 font-medium">Native Windows Desktop Engine {isAdmin ? '· Elevated (Admin)' : ''}</span>
+            ) : (
+              'Windows 11 Hardware & Power Optimization Suite'
+            )}
+          </p>
         </div>
       </div>
 
@@ -78,7 +114,10 @@ export const HeaderTitleBar: React.FC<HeaderTitleBarProps> = ({
       </div>
 
       {/* Right: Actions, Wallpaper & Windows Controls */}
-      <div className="flex items-center gap-2">
+      <div
+        className="flex items-center gap-2"
+        style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
+      >
         {/* Wallpaper Picker */}
         <div className="relative">
           <button
@@ -130,18 +169,21 @@ export const HeaderTitleBar: React.FC<HeaderTitleBarProps> = ({
         {/* Realistic Windows Frame Controls */}
         <div className="flex items-center ml-2 border-l border-white/10 pl-2">
           <button
+            onClick={handleMinimize}
             title="Minimize"
             className="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 rounded transition-colors"
           >
             <Minus className="w-3.5 h-3.5" />
           </button>
           <button
+            onClick={handleMaximize}
             title="Maximize / Restore"
             className="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 rounded transition-colors"
           >
             <Square className="w-3 h-3" />
           </button>
           <button
+            onClick={handleClose}
             title="Close"
             className="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-white hover:bg-rose-600/80 rounded transition-colors"
           >

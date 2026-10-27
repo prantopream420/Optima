@@ -1,8 +1,15 @@
 node_modules/
 build/
 dist/
+release/
 coverage/
 .DS_Store
 *.log
+*.blockmap
 .env*
 !.env.example
+
+# Release binaries (uploaded to GitHub Releases, not committed)
+Final_Release_Package/
+AeroOptima_Host.exe
+*.exe
